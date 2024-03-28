@@ -17,26 +17,28 @@
 // db('foo-table').where('id', id).update({ bar: 'new bar' }) // resolves to the **number of records** affected by the update
 // db('foo-table').where('id', id).delete() // resolves to the **number of records** affected by the delete
 // ```
-const db = require('./data/budget.db3')
-const getAll = () => {
-  // DO YOUR MAGIC
+const db = require('../../data/db-config')
 
+const getAll = () => {
+  // select * from accounts;
+  return db('accounts');
 }
 
 const getById = id => {
-  // DO YOUR MAGIC
+  // select * from accounts where id = id;
+  return db('accounts').where({id: id}).first()
 }
 
 const create = account => {
-  // DO YOUR MAGIC
+  return db('accounts').insert({account})
 }
 
 const updateById = (id, account) => {
-  // DO YOUR MAGIC
+  return db('accounts').where(id, id).update({account: account})
 }
 
 const deleteById = id => {
-  // DO YOUR MAGIC
+  return db('accounts').where({id: id}).del()
 }
 
 module.exports = {

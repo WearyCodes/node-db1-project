@@ -1,27 +1,23 @@
 const router = require('express').Router()
 const md = require('./accounts-middleware')
+const Accounts = require('./accounts-model')
 
-router.get('/', (req, res, next) => {
-  // DO YOUR MAGIC
+
+router.get('/', async (req, res, next) => {
   try {
-    res.json('get accounts')
+    const accounts = await Accounts.getAll()
+    res.json(accounts)
   } catch (err) {
     next(err)
   }
 })
 
-router.get('/:id', md.checkAccountId, (req, res, next) => {
-  // DO YOUR MAGIC
-  try {
-res.json('get account by id')
-  } catch {
-    next(err)
-  }
+router.get('/:id', md.checkAccountId, async (req, res, next) => {
+  res.json(req.account)
 })
 
 router.post('/', md.checkAccountPayload, md.checkAccountNameUnique,
  (req, res, next) => {
-  // DO YOUR MAGIC
   try {
 res.json('post account')
   } catch {
@@ -31,7 +27,6 @@ res.json('post account')
 
 router.put('/:id', md.checkAccountId, md.checkAccountPayload,
  md.checkAccountNameUnique, (req, res, next) => {
-  // DO YOUR MAGIC
   try {
 res.json('update account by id')
   } catch {
@@ -40,7 +35,6 @@ res.json('update account by id')
 });
 
 router.delete('/:id', md.checkAccountId, (req, res, next) => {
-  // DO YOUR MAGIC
   try {
 res.json('delete account by id')
   } catch {
@@ -49,7 +43,6 @@ res.json('delete account by id')
 })
 
 router.use((err, req, res, next) => { // eslint-disable-line
-  // DO YOUR MAGIC
   res.status(err.status || 500).json({
     message: err.message
   })
