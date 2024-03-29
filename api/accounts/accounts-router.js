@@ -35,9 +35,10 @@ res.json('update account by id')
   }
 });
 
-router.delete('/:id', md.checkAccountId, (req, res, next) => {
+router.delete('/:id', md.checkAccountId, async (req, res, next) => {
   try {
-res.json('delete account by id')
+    await Accounts.deleteById(req.params.id)
+    res.json(req.account)
   } catch {
     next(err)
   }
