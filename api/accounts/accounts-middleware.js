@@ -1,17 +1,34 @@
 const Account = require('./accounts-model')
-
+const db = require('../../data/db-config')
 exports.checkAccountPayload = (req, res, next) => {
-  console.log('Check Account Payload middleware')
-  // DO YOUR MAGIC 
-  // Note: you can either write "manual" validation logic
-  // or use the Yup library (not currently installed)
-  next()
+  console.log('Check account payload middleware')
+  if (!req.body.name || !req.body.budget) {
+    next({status: 400, message: 'name and budget are required'})
+  } else if (typeof(req.body.name) !== 'string') {
+    next({status: 400, message: 'name of account must be a string'})
+  } else if (req.body.name.trim().length > 100 || req.body.name.trim().length < 3 ){
+    next({status: 400, message: 'name of account must be between 3 and 100'})
+  } else if (typeof(req.body.budget) !== 'number'){
+    next({status: 400, message: 'budget of account must be a number'})
+  } else if (req.body.budget > 1000000 || req.body.budget < 0 ){
+    next({status: 400, message: 'budget of account is too large or too small'})}
+    else {
+      next()
+    }
 }
 
-exports.checkAccountNameUnique = (req, res, next) => {
+exports.checkAccountNameUnique = async (req, res, next) => {
 console.log('Check Account Name Unique middleware')
-  // DO YOUR MAGIC 
-  next()
+  try {
+    const existing = await db('accounts').where('name', req.body.name.trim())
+    .first()
+    if (existing) {next({status: 400, message: 'that name is taken'})}
+    else {
+      next()
+    }
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.checkAccountId = async (req, res, next) => {
